@@ -1,3 +1,13 @@
+"""
+# create_databases_and_tables.py
+
+## Purpose:
+This script creates the necessary databases and tables in both the DEV and PROD environments.
+
+## Usage:
+    python3 scripts/create_databases_and_tables.py
+"""
+
 import os
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT

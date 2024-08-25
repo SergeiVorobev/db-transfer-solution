@@ -1,3 +1,17 @@
+"""
+# validate_and_transfer.py
+
+## Purpose:
+This script validates the extracted data from the DEV database and prepares it for insertion or updating in the PROD database.
+
+## Usage:
+This script is invoked within `data_transfer.py` and is not typically run directly by the user.
+
+## Details:
+- Validates the data by checking for duplicates and other constraints.
+- Prepares the data for transfer to the PROD database.
+"""
+
 import psycopg2
 import os
 from dotenv import load_dotenv

@@ -1,3 +1,17 @@
+"""
+# extract_data_from_dev.py
+
+## Purpose:
+This script extracts records from the DEV database that are candidates for transfer to the PROD database.
+
+## Usage:
+This script is designed to be used internally by `data_transfer.py` and typically does not need to be run directly.
+
+## Details:
+- Queries the DEV database for new or updated records in the `documents` table.
+- Returns the extracted records for further processing.
+"""
+
 import os
 import psycopg2
 from dotenv import load_dotenv
