@@ -1,0 +1,33 @@
+import os
+import psycopg2
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+def extract_new_records():
+    try:
+        # Connect to the DEV database
+        conn = psycopg2.connect(
+            host=os.getenv("DB_HOST"),
+            dbname=os.getenv("DB_DEV_NAME"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            port=os.getenv("DB_PORT")
+        )
+        
+        with conn.cursor() as cursor:
+            # Extract all records from the documents table
+            cursor.execute("""
+                SELECT id, company_id, title, content
+                FROM documents;
+            """)
+            new_records = cursor.fetchall()
+            print(f"Extracted {len(new_records)} records from the DEV database.")
+            return new_records
+
+    except Exception as e:
+        print(f"Error extracting new records: {e}")
+        return []
+    finally:
+        conn.close()
