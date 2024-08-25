@@ -13,6 +13,10 @@ def count_records(cursor, table_name):
     cursor.execute(f"SELECT COUNT(*) FROM {table_name};")
     return cursor.fetchone()[0]
 
+def get_existing_records(cursor, table_name):
+    cursor.execute(f"SELECT id FROM {table_name};")
+    return set(record[0] for record in cursor.fetchall())
+
 def validate_and_transfer_data():
     # Establish connections to both DEV and PROD databases
     dev_conn = psycopg2.connect(
@@ -40,11 +44,17 @@ def validate_and_transfer_data():
         logging.info(f"Number of records in DEV 'documents' table: {dev_document_count}")
 
         # Count records in PROD database
-        prod_document_count = count_records(prod_cursor, "documents")
-        logging.info(f"Number of records in PROD 'documents' table: {prod_document_count}")
+        prod_document_count_before = count_records(prod_cursor, "documents")
+        logging.info(f"Number of records in PROD 'documents' table before transfer: {prod_document_count_before}")
+
+        # Get existing records in PROD database
+        existing_ids_in_prod = get_existing_records(prod_cursor, "documents")
 
         # Extract data from the DEV database
         documents_data = extract_new_records()
+
+        # Track updated records
+        updated_records = 0
 
         # Iterate over the documents data
         for document in documents_data:
@@ -53,15 +63,23 @@ def validate_and_transfer_data():
             title = document[2]
             content = document[3]
 
-            # Insert or update the document in the PROD database
-            prod_cursor.execute("""
-                INSERT INTO documents (id, company_id, title, content)
-                VALUES (%s, %s, %s, %s)
-                ON CONFLICT (id)
-                DO UPDATE SET company_id = EXCLUDED.company_id,
-                              title = EXCLUDED.title,
-                              content = EXCLUDED.content;
-            """, (document_id, company_id, title, content))
+            if document_id in existing_ids_in_prod:
+                updated_records += 1
+
+            try:
+                # Insert or update the document in the PROD database
+                prod_cursor.execute("""
+                    INSERT INTO documents (id, company_id, title, content)
+                    VALUES (%s, %s, %s, %s)
+                    ON CONFLICT (id)
+                    DO UPDATE SET company_id = EXCLUDED.company_id,
+                                  title = EXCLUDED.title,
+                                  content = EXCLUDED.content;
+                """, (document_id, company_id, title, content))
+            except psycopg2.errors.UniqueViolation as e:
+                # Handle unique constraint violation (e.g., log and continue)
+                logging.warning(f"Unique constraint violation during insert/update: {e}")
+                continue
 
         # Commit the transaction
         prod_conn.commit()
@@ -69,6 +87,7 @@ def validate_and_transfer_data():
         # Re-count records in PROD database
         prod_document_count_after = count_records(prod_cursor, "documents")
         logging.info(f"Number of records in PROD 'documents' table after transfer: {prod_document_count_after}")
+        logging.info(f"Number of records updated in PROD 'documents' table: {updated_records}")
 
     except Exception as e:
         logging.error(f"Error during data validation and transfer: {e}")

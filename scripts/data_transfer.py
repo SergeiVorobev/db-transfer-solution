@@ -20,21 +20,6 @@ from validate_and_transfer import validate_and_transfer_data
 # Load environment variables
 load_dotenv()
 
-# Create logs directory if it does not exist
-log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
-os.makedirs(log_dir, exist_ok=True)
-
-# Configure logging
-log_filename = datetime.datetime.now().strftime('data_transfer_%Y%m%d_%H%M%S.log')
-log_filepath = os.path.join(log_dir, log_filename)
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(log_filepath),
-        logging.StreamHandler()
-    ]
-)
 
 def main():
     try:

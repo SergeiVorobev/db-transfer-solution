@@ -1,0 +1,57 @@
+{
+    "categories": [
+        {"id": 1, "title": "Tech", "description": "Technology related companies"},
+        {"id": 2, "title": "Finance", "description": "Financial services"},
+        {"id": 3, "title": "Health", "description": "Healthcare and wellness"},
+        {"id": 4, "title": "Education", "description": "Educational institutions"},
+        {"id": 5, "title": "Retail", "description": "Retail businesses"},
+        {"id": 6, "title": "Entertainment", "description": "Entertainment and media"}
+    ],
+    "companies": [
+        {"id": 1, "category_id": 1, "title": "Tech Corp", "site_url": "http://techcorp.com", "description": "A leading tech company"},
+        {"id": 2, "category_id": 2, "title": "Finance Inc", "site_url": "http://financeinc.com", "description": "Financial services provider"},
+        {"id": 3, "category_id": 3, "title": "HealthPlus", "site_url": "http://healthplus.com", "description": "Healthcare solutions"},
+        {"id": 4, "category_id": 4, "title": "EduTech", "site_url": "http://edutech.com", "description": "Educational technology"},
+        {"id": 5, "category_id": 5, "title": "Retailer", "site_url": "http://retailer.com", "description": "General retail store"},
+        {"id": 6, "category_id": 1, "title": "Future Tech", "site_url": "http://futuretech.com", "description": "Innovative technology solutions"},
+        {"id": 7, "category_id": 6, "title": "MediaHouse", "site_url": "http://mediahouse.com", "description": "Media and entertainment solutions"}
+    ],
+    "documents": [
+        {"id": 1, "company_id": 1, "title": "Tech Innovations", "content": "Latest advancements in technology."},
+        {"id": 2, "company_id": 2, "title": "Financial Trends", "content": "Current trends in the financial world."},
+        {"id": 3, "company_id": 3, "title": "Healthcare Advances", "content": "New advances in healthcare technology."},
+        {"id": 4, "company_id": 4, "title": "Education Reform", "content": "Recent reforms in education."},
+        {"id": 5, "company_id": 5, "title": "Retail Strategies", "content": "Effective strategies in retail."},
+        {"id": 6, "company_id": 1, "title": "AI in Tech", "content": "Impact of AI on the tech industry."},
+        {"id": 7, "company_id": 7, "title": "Future of Media", "content": "Upcoming trends in media and entertainment."},
+        {"id": 8, "company_id": 7, "title": "Media Innovations", "content": "Innovations in media technology."},
+        {"id": 9, "company_id": 3, "title": "Health Insights", "content": "Insights into healthcare improvements."},
+        {"id": 10, "company_id": 4, "title": "Digital Learning", "content": "The future of digital learning platforms."},
+        {"id": 11, "company_id": 1, "title": "Tech and AI", "content": "Impact of AI on the tech industry."},
+        {"id": 12, "company_id": 2, "title": "Financial Insights", "content": "Insights into financial markets."},
+        {"id": 13, "company_id": 5, "title": "Retail Innovations", "content": "Innovations in the retail sector."},
+        {"id": 14, "company_id": 6, "title": "Entertainment Trends", "content": "Trends in the entertainment industry."},
+        {"id": 15, "company_id": 7, "title": "Media Strategy", "content": "Effective strategies for media companies."}
+    ],
+    "images": [
+        {"id": 1, "document_id": 1, "image_url": "http://techcorp.com/image1.jpg", "description": "Tech innovations image 1"},
+        {"id": 2, "document_id": 2, "image_url": "http://financeinc.com/image1.jpg", "description": "Financial trends image 1"},
+        {"id": 3, "document_id": 3, "image_url": "http://healthplus.com/image1.jpg", "description": "Healthcare advancements image 1"},
+        {"id": 4, "document_id": 4, "image_url": "http://edutech.com/image1.jpg", "description": "Education reform image 1"},
+        {"id": 5, "document_id": 5, "image_url": "http://retailer.com/image1.jpg", "description": "Retail strategies image 1"},
+        {"id": 6, "document_id": 7, "image_url": "http://mediahouse.com/image1.jpg", "description": "Future of media image 1"},
+        {"id": 7, "document_id": 8, "image_url": "http://mediahouse.com/image2.jpg", "description": "Media innovations image 1"},
+        {"id": 8, "document_id": 9, "image_url": "http://healthplus.com/image2.jpg", "description": "Health insights image 1"},
+        {"id": 9, "document_id": 10, "image_url": "http://edutech.com/image2.jpg", "description": "Digital learning image 1"},
+        {"id": 10, "document_id": 11, "image_url": "http://techcorp.com/image2.jpg", "description": "Tech and AI image 1"}
+    ],
+    "companies_categories": [
+        {"company_id": 1, "category_id": 1},
+        {"company_id": 2, "category_id": 2},
+        {"company_id": 3, "category_id": 3},
+        {"company_id": 4, "category_id": 4},
+        {"company_id": 5, "category_id": 5},
+        {"company_id": 6, "category_id": 1},
+        {"company_id": 7, "category_id": 6}
+    ]
+}
