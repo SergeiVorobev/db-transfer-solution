@@ -1,3 +1,17 @@
+"""
+# validate_and_transfer.py
+
+## Purpose:
+This script validates the extracted data from the DEV database and prepares it for insertion or updating in the PROD database.
+
+## Usage:
+This script is invoked within `data_transfer.py` and is not typically run directly by the user.
+
+## Details:
+- Validates the data by checking for duplicates and other constraints.
+- Prepares the data for transfer to the PROD database.
+"""
+
 import psycopg2
 import os
 from dotenv import load_dotenv
@@ -47,14 +61,12 @@ def validate_and_transfer_data():
         prod_document_count_before = count_records(prod_cursor, "documents")
         logging.info(f"Number of records in PROD 'documents' table before transfer: {prod_document_count_before}")
 
-        # Get existing records in PROD database
-        existing_ids_in_prod = get_existing_records(prod_cursor, "documents")
-
         # Extract data from the DEV database
         documents_data = extract_new_records()
 
-        # Track updated records
+        # Track updated and skipped records
         updated_records = 0
+        skipped_records = 0
 
         # Iterate over the documents data
         for document in documents_data:
@@ -63,36 +75,34 @@ def validate_and_transfer_data():
             title = document[2]
             content = document[3]
 
-            if document_id in existing_ids_in_prod:
-                updated_records += 1
-
             try:
-                # Insert or update the document in the PROD database
-                prod_cursor.execute("""
-                    INSERT INTO documents (id, company_id, title, content)
-                    VALUES (%s, %s, %s, %s)
-                    ON CONFLICT (id)
-                    DO UPDATE SET company_id = EXCLUDED.company_id,
-                                  title = EXCLUDED.title,
-                                  content = EXCLUDED.content;
-                """, (document_id, company_id, title, content))
+                # Use individual transactions for each record to handle errors separately
+                with prod_conn.cursor() as single_cursor:
+                    single_cursor.execute("""
+                        INSERT INTO documents (id, company_id, title, content)
+                        VALUES (%s, %s, %s, %s)
+                        ON CONFLICT (id)
+                        DO UPDATE SET company_id = EXCLUDED.company_id,
+                                      title = EXCLUDED.title,
+                                      content = EXCLUDED.content;
+                    """, (document_id, company_id, title, content))
+                    updated_records += 1
+                prod_conn.commit()
             except psycopg2.errors.UniqueViolation as e:
-                # Handle unique constraint violation (e.g., log and continue)
-                logging.warning(f"Unique constraint violation during insert/update: {e}")
-                continue
+                # Log the unique constraint violation and continue
+                logging.warning(f"Unique constraint violation for title '{title}': {e}")
+                skipped_records += 1
+                prod_conn.rollback()  # Rollback the transaction for the failed record
 
-        # Commit the transaction
-        prod_conn.commit()
-
+    except Exception as e:
+        logging.warning(f"Non-fatal error during data validation and transfer: {e}")
+    finally:
         # Re-count records in PROD database
         prod_document_count_after = count_records(prod_cursor, "documents")
         logging.info(f"Number of records in PROD 'documents' table after transfer: {prod_document_count_after}")
         logging.info(f"Number of records updated in PROD 'documents' table: {updated_records}")
+        logging.info(f"Number of records skipped due to unique constraint violations: {skipped_records}")
 
-    except Exception as e:
-        logging.error(f"Error during data validation and transfer: {e}")
-        prod_conn.rollback()
-    finally:
         dev_cursor.close()
         prod_cursor.close()
         dev_conn.close()

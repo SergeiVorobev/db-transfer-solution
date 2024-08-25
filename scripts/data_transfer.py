@@ -1,13 +1,14 @@
 """
-data_transfer.py
+# data_transfer.py
 
+## Purpose:
 This script orchestrates the data transfer process by:
 1. Extracting data from the DEV database.
 2. Validating and transferring data to the PROD database.
 3. Optionally, it can also include logging or reporting.
 
-Usage:
-    python data_transfer.py
+## Usage:
+    python3 scripts/data_transfer.py
 """
 
 import logging

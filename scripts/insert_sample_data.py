@@ -1,3 +1,13 @@
+"""
+# insert_sample_data.py
+
+## Purpose:
+This script inserts sample data into the DEV and PROD databases using JSON files located in the `sample_data` directory.
+
+## Usage:
+    python3 scripts/insert_sample_data.py
+"""
+
 import json
 import psycopg2
 from dotenv import load_dotenv
