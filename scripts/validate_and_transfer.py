@@ -2,8 +2,16 @@ import psycopg2
 import os
 from dotenv import load_dotenv
 from extract_data_from_dev import extract_new_records
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 load_dotenv()
+
+def count_records(cursor, table_name):
+    cursor.execute(f"SELECT COUNT(*) FROM {table_name};")
+    return cursor.fetchone()[0]
 
 def validate_and_transfer_data():
     # Establish connections to both DEV and PROD databases
@@ -27,6 +35,14 @@ def validate_and_transfer_data():
     prod_cursor = prod_conn.cursor()
 
     try:
+        # Count records in DEV database
+        dev_document_count = count_records(dev_cursor, "documents")
+        logging.info(f"Number of records in DEV 'documents' table: {dev_document_count}")
+
+        # Count records in PROD database
+        prod_document_count = count_records(prod_cursor, "documents")
+        logging.info(f"Number of records in PROD 'documents' table: {prod_document_count}")
+
         # Extract data from the DEV database
         documents_data = extract_new_records()
 
@@ -50,8 +66,12 @@ def validate_and_transfer_data():
         # Commit the transaction
         prod_conn.commit()
 
+        # Re-count records in PROD database
+        prod_document_count_after = count_records(prod_cursor, "documents")
+        logging.info(f"Number of records in PROD 'documents' table after transfer: {prod_document_count_after}")
+
     except Exception as e:
-        print(f"Error during data validation and transfer: {e}")
+        logging.error(f"Error during data validation and transfer: {e}")
         prod_conn.rollback()
     finally:
         dev_cursor.close()
