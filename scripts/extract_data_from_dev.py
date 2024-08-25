@@ -23,7 +23,6 @@ def extract_new_records():
                 FROM documents;
             """)
             new_records = cursor.fetchall()
-            print(f"Extracted {len(new_records)} records from the DEV database.")
             return new_records
 
     except Exception as e:
